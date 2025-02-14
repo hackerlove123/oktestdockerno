@@ -1,7 +1,7 @@
 const TelegramBot = require('node-telegram-bot-api');
 const { exec } = require('child_process');
 
-const token = '8129263243:AAFoQBpm5Uv1F_ZNBPFf2bRSkJsJafcLG7A';
+const token = '8129263243:AAFFuKtWwFC_pX_hhbcHGknet9hZg26fu3w';
 const bot = new TelegramBot(token, { polling: true });
 
 const adminId = 7371969470;
