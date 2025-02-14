@@ -1,8 +1,11 @@
 # Sử dụng image Node.js từ Ubuntu
 FROM node:lts as builder
 
-# Copy tất cả các file từ repository vào container
-COPY . .
+# Copy tất cả các file vào thư mục /negan trong container
+COPY . /negan
+
+# Chuyển vào thư mục negan
+WORKDIR /negan
 
 # Cài đặt các module cần thiết bằng npm
 RUN npm install hpack https commander colors socks
