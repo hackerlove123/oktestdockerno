@@ -2,16 +2,16 @@ const TelegramBot = require('node-telegram-bot-api');
 const { exec } = require('child_process');
 const os = require('os');
 
-const token = '8129263243:AAERUaWwxpHL9NSYGLwKtgU31xP6hLu7K7U';
+const token = '8129263243:AAGihGBFbslIDKHRWgNV6K1_GrbVbcL718k';
 const bot = new TelegramBot(token, { polling: true });
 
 const adminId = 7371969470;
 
 // Hàm lấy thông số CPU và RAM
 function getSystemStats() {
-    const totalMemory = os.totalmem(); // Tổng RAM
-    const freeMemory = os.freemem(); // RAM còn trống
-    const usedMemory = totalMemory - freeMemory; // RAM đã sử dụng
+    const totalMemory = os.totalmem(); // Tổng RAM (bytes)
+    const freeMemory = os.freemem(); // RAM còn trống (bytes)
+    const usedMemory = totalMemory - freeMemory; // RAM đã sử dụng (bytes)
     const memoryUsagePercent = ((usedMemory / totalMemory) * 100).toFixed(2); // % RAM đã sử dụng
 
     const cpus = os.cpus(); // Thông tin CPU cores
@@ -26,23 +26,28 @@ function getSystemStats() {
     return {
         memoryUsagePercent,
         cpuUsagePercent,
-        totalMemory: (totalMemory / 1024 / 1024).toFixed(2), // Chuyển đổi sang MB
-        freeMemory: (freeMemory / 1024 / 1024).toFixed(2), // Chuyển đổi sang MB
+        totalMemory: (totalMemory / 1024 / 1024 / 1024).toFixed(0), // Chuyển đổi sang GB (làm tròn)
+        freeMemory: (freeMemory / 1024 / 1024 / 1024).toFixed(0), // Chuyển đổi sang GB (làm tròn)
     };
 }
 
-// Gửi thông số CPU và RAM mỗi 7 giây
+// Gửi thông số CPU và RAM mỗi 14 giây
 setInterval(() => {
     const stats = getSystemStats();
+    const cpuFreePercent = (100 - parseFloat(stats.cpuUsagePercent)).toFixed(2); // % CPU còn trống
+
     const message = `
-❤️ Thông số hệ thống:
+🚀 Thông số hệ thống:
 - CPU đã sử dụng: ${stats.cpuUsagePercent}%
 - RAM đã sử dụng: ${stats.memoryUsagePercent}%
-- Tổng RAM: ${stats.totalMemory} MB
-- RAM còn trống: ${stats.freeMemory} MB
+
+❤️ Thông số còn trống
+- CPU còn trống: ${cpuFreePercent}%
+- RAM còn trống: ${stats.freeMemory}GB
+- Tổng RAM: ${stats.totalMemory}GB
     `;
     bot.sendMessage(adminId, message);
-}, 7000); // 7 giây
+}, 14000); // 14 giây
 
 // Xử lý lệnh từ admin
 bot.on('message', (msg) => {
