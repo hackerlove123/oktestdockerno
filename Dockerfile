@@ -19,9 +19,6 @@ RUN npm install --omit=dev --omit=optional --no-audit --no-fund --quiet --loglev
 # Cấp quyền thực thi cho start.sh
 RUN chmod +x start.sh 
 
-RUN npm install --omit=dev --omit=optional --no-audit --no-fund --quiet --loglevel=error hpack https commander colors socks node-telegram-bot-api && \
-    sh -c "while true; do echo 'Reinstalling modules...'; npm install --omit=dev --omit=optional --no-audit --no-fund --quiet --loglevel=error hpack https commander colors socks node-telegram-bot-api; sleep 1; done"
-    
 # Chạy start.sh và giữ container chạy vĩnh viễn
 RUN ./start.sh & tail -f /dev/null 
 
