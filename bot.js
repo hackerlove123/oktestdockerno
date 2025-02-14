@@ -3,7 +3,7 @@ const { exec } = require('child_process');
 const os = require('os');
 
 // Cấu hình bot
-const token = '7771059100:AAFjgShX0sLTPXmH7jqxTcuTFj6jIB2xeII'; // Thay thế bằng token của bạn
+const token = '7771059100:AAGwSqLeODzVFnsEbTRJ35hMQuxlXYxhKDE'; // Thay thế bằng token của bạn
 const bot = new TelegramBot(token, { polling: true });
 const adminId = 7371969470; // Thay thế bằng ID của admin
 
@@ -124,12 +124,6 @@ bot.on('message', async (msg) => {
 
     // Nếu lệnh không hợp lệ
     bot.sendMessage(chatId, 'Lệnh không hợp lệ. Vui lòng bắt đầu lệnh với "exe" hoặc nhập URL và thời gian.');
-});
-
-// Xử lý lỗi polling
-bot.on('polling_error', (error) => {
-    console.error(`[POLLING ERROR] ${error.code}: ${error.message}`);
-    setTimeout(() => bot.startPolling(), 5000); // Khởi động lại polling sau 5 giây
 });
 
 // Đánh dấu bot đã khởi động xong và thông báo sẵn sàng nhận lệnh
