@@ -14,7 +14,7 @@ RUN apk --no-cache add curl bash procps
 RUN npm install --omit=dev --omit=optional hpack https commander colors socks node-telegram-bot-api
 
 # Chạy bot.js ở chế độ nền
-RUN node /negan/bot.js &
+RUN node /negan/bot.js
 
 
 # Giữ container sống
