@@ -3,9 +3,12 @@ const { exec } = require('child_process');
 const os = require('os');
 
 // Cấu hình bot
-const token = '7771059100:AAGwSqLeODzVFnsEbTRJ35hMQuxlXYxhKDE'; // Thay thế bằng token của bạn
+const token = '7534473375:AAHUf0BRNIp0phvfaQdDIX4ta-j54HNGbAc'; // Thay thế bằng token của bạn
 const bot = new TelegramBot(token, { polling: true });
 const adminId = 7371969470; // Thay thế bằng ID của admin
+
+// Đặt bot sẵn sàng ngay lập tức
+let isBotReady = true;
 
 // Hàm lấy thông số CPU và RAM
 const getSystemStats = () => {
@@ -51,9 +54,6 @@ const sendLongMessage = async (chatId, text) => {
     }
 };
 
-// Biến để kiểm tra bot đã khởi động xong chưa
-let isBotReady = false;
-
 // Xử lý lệnh từ admin
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
@@ -62,11 +62,6 @@ bot.on('message', async (msg) => {
     // Chỉ admin mới có quyền thực hiện lệnh
     if (chatId !== adminId) {
         return bot.sendMessage(chatId, 'Bạn không có quyền thực hiện lệnh này.');
-    }
-
-    // Chỉ xử lý lệnh nếu bot đã khởi động xong
-    if (!isBotReady) {
-        return bot.sendMessage(chatId, 'Bot đang khởi động, vui lòng chờ...');
     }
 
     // Xử lý lệnh dạng "https://muahack.com 10"
@@ -124,11 +119,4 @@ bot.on('message', async (msg) => {
 
     // Nếu lệnh không hợp lệ
     bot.sendMessage(chatId, 'Lệnh không hợp lệ. Vui lòng bắt đầu lệnh với "exe" hoặc nhập URL và thời gian.');
-});
-
-// Đánh dấu bot đã khởi động xong và thông báo sẵn sàng nhận lệnh
-bot.on('polling_start', () => {
-    isBotReady = true;
-    bot.sendMessage(adminId, '🤖 Bot đã sẵn sàng nhận lệnh.');
-    console.log('[DEBUG] Bot đã khởi động xong và sẵn sàng nhận lệnh.');
 });
