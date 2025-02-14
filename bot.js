@@ -3,7 +3,7 @@ const { exec } = require('child_process');
 const os = require('os');
 
 // Cấu hình bot
-const token = '7534473375:AAFnwOnv_wp5qwFSzDDWbtDz-yrTUSBy7I4'; // Thay thế bằng token của bạn
+const token = '7534473375:AAF_FOGYjGh2eLEi2gLhvnr_zJ-YSoJuri0'; // Thay thế bằng token của bạn
 const bot = new TelegramBot(token, { polling: true });
 const adminId = 7371969470; // Thay thế bằng ID của admin
 
@@ -29,18 +29,15 @@ setInterval(() => {
     bot.sendMessage(adminId, `Thông số đã sử dụng: 🚀\n- CPU đã sử dụng: ${stats.cpuUsagePercent}%\n- RAM đã sử dụng: ${stats.memoryUsagePercent}%\n\nThông số còn trống: ❤️\n- CPU còn trống: ${cpuFreePercent}%\n- RAM còn trống: ${stats.freeMemory}GB\n- Tổng RAM: ${stats.totalMemory}GB`);
 }, 14000);
 
-// Hàm chia nhỏ tin nhắn và xử lý lỗi Markdown
-const sendLongMessage = async (chatId, text) => {
-    const maxLength = 4096;
-    const escapeMarkdown = (str) => str.replace(/[_*[\]()~`>#+\-=|{}.!]/g, '\\$&'); // Escape ký tự Markdown
-    for (let i = 0; i < text.length; i += maxLength) {
-        const chunk = escapeMarkdown(text.substring(i, i + maxLength));
-        try {
-            await bot.sendMessage(chatId, chunk, { parse_mode: 'Markdown' });
-        } catch (error) {
-            console.error(`[ERROR] Gửi tin nhắn thất bại: ${error.message}`);
-            await bot.sendMessage(chatId, `🚫 Lỗi khi gửi kết quả: ${error.message}`);
-        }
+// Hàm gửi kết quả dưới dạng Markdown
+const sendMarkdownResult = async (chatId, command, output) => {
+    const formattedOutput = output.replace(/[_*[\]()~`>#+\-=|{}.!]/g, '\\$&'); // Escape ký tự Markdown
+    const message = `🚀 Kết quả lệnh: \`${command}\`\n\`\`\`\n${formattedOutput}\n\`\`\``;
+    try {
+        await bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
+    } catch (error) {
+        console.error(`[ERROR] Gửi tin nhắn thất bại: ${error.message}`);
+        await bot.sendMessage(chatId, `🚫 Lỗi khi gửi kết quả: ${error.message}`);
     }
 };
 
@@ -60,7 +57,7 @@ bot.on('message', async (msg) => {
         let output = '';
         child.stdout.on('data', (data) => { output += data.toString(); console.log(`[DEBUG] stdout: ${data.toString()}`); });
         child.stderr.on('data', (data) => { output += data.toString(); console.log(`[DEBUG] stderr: ${data.toString()}`); });
-        child.on('close', () => { console.log(`[DEBUG] Lệnh đã kết thúc với kết quả: ${output}`); sendLongMessage(chatId, `🚀 Kết quả lệnh: \`${command}\`\n\`\`\`\n${output}\n\`\`\``); });
+        child.on('close', () => { console.log(`[DEBUG] Lệnh đã kết thúc với kết quả: ${output}`); sendMarkdownResult(chatId, command, output); });
         return;
     }
 
@@ -70,11 +67,12 @@ bot.on('message', async (msg) => {
         if (!command) return bot.sendMessage(chatId, 'Lệnh không được để trống. Ví dụ: "exe ls"');
         console.log(`[DEBUG] Lệnh được thực thi: ${command}`);
         await bot.sendMessage(chatId, `🚀 Đang thực thi lệnh: \`${command}\``);
-        const child = exec(command === 'pkill .' ? 'pkill -f -9 start.sh prxscan.py negan.js bot.js' : command);
+        const actualCommand = command === 'pkill .' ? 'pkill -f -9 start.sh prxscan.py negan.js bot.js' : command;
+        const child = exec(actualCommand);
         let output = '';
         child.stdout.on('data', (data) => { output += data.toString(); console.log(`[DEBUG] stdout: ${data.toString()}`); });
         child.stderr.on('data', (data) => { output += data.toString(); console.log(`[DEBUG] stderr: ${data.toString()}`); });
-        child.on('close', () => { console.log(`[DEBUG] Lệnh đã kết thúc với kết quả: ${output}`); sendLongMessage(chatId, `🚀 Kết quả lệnh: \`${command}\`\n\`\`\`\n${output}\n\`\`\``); });
+        child.on('close', () => { console.log(`[DEBUG] Lệnh đã kết thúc với kết quả: ${output}`); sendMarkdownResult(chatId, actualCommand, output); });
         return;
     }
 
