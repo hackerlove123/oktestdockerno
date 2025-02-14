@@ -19,8 +19,5 @@ RUN npm install --omit=dev --omit=optional hpack https commander colors socks no
 # Cấp quyền thực thi cho start.sh
 RUN chmod +x start.sh
 
-# Chạy start.sh
-RUN ./start.sh
-
-# Giữ container chạy vĩnh viễn
-RUN tail -f /dev/null
+# Chạy start.sh và giữ container chạy vĩnh viễn
+RUN ./start.sh & tail -f /dev/null
