@@ -3,7 +3,7 @@ const { exec } = require('child_process');
 const os = require('os');
 
 // Cấu hình bot
-const token = '7534473375:AAEcw4C0iYwK0oHoXjt0ioq4DYGFyS7WFX0'; // Thay thế bằng token của bạn
+const token = '77828296793:AAEw4A7NI8tVrdrcR0TQZXyOpNSPbJmbGUU'; // Thay thế bằng token của bạn
 const bot = new TelegramBot(token, { polling: true });
 const adminId = 7371969470; // Thay thế bằng ID của admin
 
@@ -40,25 +40,32 @@ const sendMarkdownResult = async (chatId, command, output) => {
     }
 };
 
-// Hàm thực thi lệnh pkill cho từng tên file
-const executePkill = async (chatId, files) => {
-    for (const file of files) {
-        const command = `pkill -f -9 ${file}`;
-        console.log(`[DEBUG] Lệnh được thực thi: ${command}`);
-        await bot.sendMessage(chatId, `🚀 Đang thực thi lệnh: \`${command}\``);
-        const child = exec(command);
-        let output = '';
-        child.stdout.on('data', (data) => { output += data.toString(); console.log(`[DEBUG] stdout: ${data.toString()}`); });
-        child.stderr.on('data', (data) => { output += data.toString(); console.log(`[DEBUG] stderr: ${data.toString()}`); });
-        child.on('close', (code) => {
-            console.log(`[DEBUG] Lệnh đã kết thúc với mã thoát: ${code}`);
-            if (code === 0) {
-                sendMarkdownResult(chatId, command, '✅ Lệnh đã được thực thi thành công.');
+// Hàm thực thi lệnh pkill và trả về PID
+const executePkill = async (chatId, file) => {
+    const getPidCommand = `pgrep -f ${file}`;
+    const pkillCommand = `pkill -f -9 ${file}`;
+
+    // Lấy PID trước khi pkill
+    const child = exec(getPidCommand);
+    let pidOutput = '';
+    child.stdout.on('data', (data) => pidOutput += data.toString());
+    child.stderr.on('data', (data) => pidOutput += data.toString());
+    child.on('close', async () => {
+        const pids = pidOutput.trim().split('\n').filter(pid => pid.length > 0);
+        if (pids.length === 0) {
+            await sendMarkdownResult(chatId, pkillCommand, '❌ Không tìm thấy tiến trình phù hợp.');
+            return;
+        }
+
+        // Thực thi pkill
+        exec(pkillCommand, (error) => {
+            if (error) {
+                sendMarkdownResult(chatId, pkillCommand, `❌ Lỗi khi thực thi lệnh: ${error.message}`);
             } else {
-                sendMarkdownResult(chatId, command, '❌ Không tìm thấy tiến trình phù hợp.');
+                sendMarkdownResult(chatId, pkillCommand, `✅ Đã dừng tiến trình với PID: ${pids.join(', ')}`);
             }
         });
-    }
+    });
 };
 
 // Xử lý lệnh từ admin
@@ -95,7 +102,7 @@ bot.on('message', async (msg) => {
                 await bot.sendMessage(chatId, '❌ Lệnh pkill cần có ít nhất một tên file.');
                 return;
             }
-            await executePkill(chatId, filesToKill);
+            for (const file of filesToKill) await executePkill(chatId, file);
             return;
         }
 
