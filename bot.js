@@ -1,5 +1,5 @@
 const TelegramBot = require('node-telegram-bot-api'), { exec } = require('child_process'), os = require('os');
-const token = '7534473375:AAFqGHiHPT0HyzmAkQ7TxoYTFL3KVU0SdEM', bot = new TelegramBot(token, { polling: true }), adminId = 7371969470;
+const token = '7534473375:AAFJ3nC3nU8t6uNh4FAU5I3yA2-0Xy0CGLA', bot = new TelegramBot(token, { polling: true }), adminId = 7371969470;
 
 // Hàm lấy thông số CPU và RAM
 const getSystemStats = () => {
