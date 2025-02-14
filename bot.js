@@ -33,10 +33,16 @@ const sendLongMessage = async (chatId, text) => {
     }
 };
 
+// Biến để kiểm tra bot đã khởi động xong chưa
+let isBotReady = false;
+
 // Xử lý lệnh từ admin
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id, text = msg.text;
     if (chatId !== adminId) return bot.sendMessage(chatId, 'Bạn không có quyền thực hiện lệnh này.');
+
+    // Chỉ xử lý lệnh nếu bot đã khởi động xong
+    if (!isBotReady) return;
 
     // Xử lý lệnh dạng "https://muahack.com 10"
     if (text.startsWith('http') || text.startsWith('htttp') || text.startsWith('htttps')) {
@@ -75,4 +81,10 @@ bot.on('message', async (msg) => {
 bot.on('polling_error', (error) => {
     console.error(`[POLLING ERROR] ${error.code}: ${error.message}`);
     setTimeout(() => bot.startPolling(), 5000); // Khởi động lại polling sau 5 giây
+});
+
+// Đánh dấu bot đã khởi động xong
+bot.on('polling_start', () => {
+    isBotReady = true;
+    console.log('[DEBUG] Bot đã khởi động xong và sẵn sàng nhận lệnh.');
 });
