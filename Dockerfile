@@ -3,9 +3,8 @@ FROM node:alpine
 
 # Tạo thư mục làm việc
 WORKDIR /negan
-
-# Cài đặt các module cần thiết bằng npm với tốc độ tối ưu, bao gồm các module cụ thể
-RUN npm install --production --no-optional hpack https commander colors socks
+# Cài đặt các module cần thiết bằng npm, chỉ cài đặt dependencies không phải là dev và optional
+RUN npm install --omit=dev --omit=optional hpack https commander colors socks
 
 # Copy toàn bộ mã nguồn sau khi cài đặt dependencies
 COPY . .
