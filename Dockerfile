@@ -4,8 +4,6 @@ FROM node:alpine
 # Tạo thư mục làm việc
 WORKDIR /negan
 
-RUN apk add --no-cache curl
-
 # Cài đặt các module cần thiết bằng npm, chỉ cài đặt dependencies chính
 RUN npm install --omit=dev --omit=optional hpack https commander colors socks
 
