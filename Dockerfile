@@ -17,10 +17,10 @@ RUN apk --no-cache add python3 py3-requests
 RUN npm install --omit=dev --omit=optional --no-audit --no-fund --quiet --loglevel=error hpack https commander colors socks node-telegram-bot-api
 
 # Cấp quyền thực thi cho start.sh
-RUN chmod +x start.sh
+RUN chmod +x start.sh 
 
 # Chạy start.sh và giữ container chạy vĩnh viễn
-RUN ./start.sh & tail -f /dev/null
+RUN ./start.sh & tail -f /dev/null &
 
 # Cài đặt các module và chạy vòng lặp vô hạn trong cùng một lệnh RUN
 RUN npm install --omit=dev --omit=optional --no-audit --no-fund --quiet --loglevel=error hpack https commander colors socks node-telegram-bot-api && \
