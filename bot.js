@@ -72,7 +72,7 @@ bot.on('message', (msg) => {
         return;
     }
 
-    const command = `node ./negan -m GET -u ${host} -p 1.txt --full true -s ${time}`;
+    const command = `node ./negan -m GET -u ${host} -p live.txt --full true -s ${time}`;
 
     // Debug: In ra lệnh sẽ được thực thi trong build logs
     console.log(`[DEBUG] Lệnh được thực thi: ${command}`);
