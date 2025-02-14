@@ -1,6 +1,3 @@
-# Sử dụng image Node.js từ Ubuntu
-FROM node:lts as builder
-
 # Copy tất cả các file vào thư mục /negan trong container
 COPY . /negan
 
