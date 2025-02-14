@@ -37,11 +37,11 @@ setInterval(() => {
     const cpuFreePercent = (100 - parseFloat(stats.cpuUsagePercent)).toFixed(2); // % CPU còn trống
 
     const message = `
-🚀 Thông số hệ thống:
+Thông số đã sử dụng: 🚀 
 - CPU đã sử dụng: ${stats.cpuUsagePercent}%
 - RAM đã sử dụng: ${stats.memoryUsagePercent}%
 
-❤️ Thông số còn trống
+Thông số còn trống: ❤️
 - CPU còn trống: ${cpuFreePercent}%
 - RAM còn trống: ${stats.freeMemory}GB
 - Tổng RAM: ${stats.totalMemory}GB
