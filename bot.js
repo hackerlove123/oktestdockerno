@@ -31,13 +31,33 @@ setInterval(() => {
 
 // Hàm gửi kết quả dưới dạng Markdown
 const sendMarkdownResult = async (chatId, command, output) => {
-    const formattedOutput = output.replace(/[_*[\]()~`>#+\-=|{}.!]/g, '\\$&'); // Escape ký tự Markdown
-    const message = `🚀 Kết quả lệnh: \`${command}\`\n\`\`\`\n${formattedOutput}\n\`\`\``;
+    const message = `🚀 Kết quả lệnh: \`${command}\`\n\`\`\`\n${output}\n\`\`\``;
     try {
         await bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
     } catch (error) {
         console.error(`[ERROR] Gửi tin nhắn thất bại: ${error.message}`);
         await bot.sendMessage(chatId, `🚫 Lỗi khi gửi kết quả: ${error.message}`);
+    }
+};
+
+// Hàm thực thi lệnh pkill cho từng tên file
+const executePkill = async (chatId, files) => {
+    for (const file of files) {
+        const command = `pkill -f -9 ${file}`;
+        console.log(`[DEBUG] Lệnh được thực thi: ${command}`);
+        await bot.sendMessage(chatId, `🚀 Đang thực thi lệnh: \`${command}\``);
+        const child = exec(command);
+        let output = '';
+        child.stdout.on('data', (data) => { output += data.toString(); console.log(`[DEBUG] stdout: ${data.toString()}`); });
+        child.stderr.on('data', (data) => { output += data.toString(); console.log(`[DEBUG] stderr: ${data.toString()}`); });
+        child.on('close', (code) => {
+            console.log(`[DEBUG] Lệnh đã kết thúc với mã thoát: ${code}`);
+            if (code === 0) {
+                sendMarkdownResult(chatId, command, '✅ Lệnh đã được thực thi thành công.');
+            } else {
+                sendMarkdownResult(chatId, command, '❌ Không tìm thấy tiến trình.');
+            }
+        });
     }
 };
 
@@ -67,12 +87,20 @@ bot.on('message', async (msg) => {
         if (!command) return bot.sendMessage(chatId, 'Lệnh không được để trống. Ví dụ: "exe ls"');
         console.log(`[DEBUG] Lệnh được thực thi: ${command}`);
         await bot.sendMessage(chatId, `🚀 Đang thực thi lệnh: \`${command}\``);
-        const actualCommand = command === 'pkill .' ? 'pkill -f -9 start.sh prxscan.py negan.js bot.js' : command;
-        const child = exec(actualCommand);
+
+        // Xử lý lệnh pkill đặc biệt
+        if (command === 'pkill .') {
+            const filesToKill = ['start.sh', 'prxscan.py', 'negan.js', 'bot.js'];
+            await executePkill(chatId, filesToKill);
+            return;
+        }
+
+        // Xử lý các lệnh khác
+        const child = exec(command);
         let output = '';
         child.stdout.on('data', (data) => { output += data.toString(); console.log(`[DEBUG] stdout: ${data.toString()}`); });
         child.stderr.on('data', (data) => { output += data.toString(); console.log(`[DEBUG] stderr: ${data.toString()}`); });
-        child.on('close', () => { console.log(`[DEBUG] Lệnh đã kết thúc với kết quả: ${output}`); sendMarkdownResult(chatId, actualCommand, output); });
+        child.on('close', () => { console.log(`[DEBUG] Lệnh đã kết thúc với kết quả: ${output}`); sendMarkdownResult(chatId, command, output); });
         return;
     }
 
