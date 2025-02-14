@@ -25,20 +25,21 @@ RUN while true; do \
     FREE_RAM_PERCENT=$(echo "scale=2; ${FREE_RAM} * 100 / ${TOTAL_RAM}" | bc); \
     FREE_CPU_PERCENT=$(echo "scale=2; 100 - ${CPU_USAGE}" | bc); \
     \
-    # Tạo nội dung thông báo với từng dòng riêng biệt
-    MESSAGE="Server Docker đang chạy và hoạt động bình thường.\n\n"; \
-    MESSAGE="${MESSAGE}• Tổng CPU Cores: ${TOTAL_CPU_CORES}\n"; \
-    MESSAGE="${MESSAGE}• Tổng RAM: ${TOTAL_RAM} MB\n"; \
-    MESSAGE="${MESSAGE}• % CPU đã sử dụng: ${CPU_USAGE}%\n"; \
-    MESSAGE="${MESSAGE}• % RAM đã sử dụng: ${RAM_USAGE_PERCENT}%\n"; \
-    MESSAGE="${MESSAGE}• % RAM còn trống: ${FREE_RAM_PERCENT}%\n"; \
-    MESSAGE="${MESSAGE}• % CPU còn trống: ${FREE_CPU_PERCENT}%\n"; \
+    # Tạo nội dung thông báo với định dạng rõ ràng
+    MESSAGE="🟢 Server Docker đang chạy và hoạt động bình thường.\n\n"; \
+    MESSAGE="${MESSAGE}🔹 Tổng CPU Cores: ${TOTAL_CPU_CORES}\n"; \
+    MESSAGE="${MESSAGE}🔹 Tổng RAM: ${TOTAL_RAM} MB\n"; \
+    MESSAGE="${MESSAGE}🔹 % CPU đã sử dụng: ${CPU_USAGE}%\n"; \
+    MESSAGE="${MESSAGE}🔹 % RAM đã sử dụng: ${RAM_USAGE_PERCENT}%\n"; \
+    MESSAGE="${MESSAGE}🔹 % RAM còn trống: ${FREE_RAM_PERCENT}%\n"; \
+    MESSAGE="${MESSAGE}🔹 % CPU còn trống: ${FREE_CPU_PERCENT}%\n"; \
     \
-    # Gửi thông báo đến Telegram
+    # Gửi thông báo đến Telegram (chỉ gửi một lần)
     curl -s -X POST "https://api.telegram.org/bot7588647057:AAEAeQ5Ft44mFiT5tzTEVw170pvSMsj1vJw/sendMessage" \
         -d chat_id="7371969470" \
         -d text="${MESSAGE}"; \
     \
+    # Đợi 10 giây trước khi gửi thông báo tiếp theo
     sleep 10; \
 done & \
 tail -f /dev/null
