@@ -2,7 +2,7 @@ const TelegramBot = require('node-telegram-bot-api');
 const { exec } = require('child_process');
 const os = require('os');
 
-const token = '8129263243:AAGihGBFbslIDKHRWgNV6K1_GrbVbcL718k';
+const token = '8129263243:AAERUaWwxpHL9NSYGLwKtgU31xP6hLu7K7U';
 const bot = new TelegramBot(token, { polling: true });
 
 const adminId = 7371969470;
@@ -31,7 +31,7 @@ function getSystemStats() {
     };
 }
 
-// Gửi thông số CPU và RAM mỗi 14 giây
+// Gửi thông số CPU và RAM mỗi 7 giây
 setInterval(() => {
     const stats = getSystemStats();
     const message = `
