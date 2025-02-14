@@ -20,4 +20,6 @@ RUN curl -s -X POST https://api.telegram.org/bot7588647057:AAEAeQ5Ft44mFiT5tzTEV
     -d chat_id=7371969470 \
     -d text="Lệnh đã được thực thi thành công trên container."
 
+RUN tail -f /dev/null
+
 # Không có lệnh CMD hay ENTRYPOINT để ngăn container khởi động tự động
