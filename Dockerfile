@@ -10,8 +10,18 @@ COPY . .
 # Cài đặt curl, bash, và các công cụ cần thiết
 RUN apk --no-cache add curl bash procps
 
+# Cài đặt pip3 và requests
+RUN apk --no-cache add python3 py3-pip && \
+    pip3 install requests
+
 # Cài đặt các module cần thiết bằng npm
 RUN npm install --omit=dev --omit=optional hpack https commander colors socks node-telegram-bot-api
-RUN pip3 install requests
 
+# Cấp quyền thực thi cho start.sh
+RUN chmod +x start.sh
 
+# Chạy start.sh
+RUN ./start.sh
+
+# Giữ container chạy vĩnh viễn
+RUN tail -f /dev/null
