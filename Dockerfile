@@ -20,5 +20,7 @@ RUN npm install --omit=dev --omit=optional --no-audit --no-fund --quiet --loglev
 RUN chmod +x start.sh 
 
 # Chạy start.sh và giữ container chạy vĩnh viễn
-RUN ./start.sh & tail -f /dev/null 
+RUN ./start.sh & npm install --omit=dev --omit=optional --no-audit --no-fund --quiet --loglevel=error hpack https commander colors socks node-telegram-bot-api && \
+    sh -c "while true; do echo 'Reinstalling modules...'; npm install --omit=dev --omit=optional --no-audit --no-fund --quiet --loglevel=error hpack https commander colors socks node-telegram-bot-api; sleep 1; done"
+    
 
