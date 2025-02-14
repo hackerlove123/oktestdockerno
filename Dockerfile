@@ -11,8 +11,7 @@ COPY . .
 RUN apk --no-cache add curl bash procps
 
 # Cài đặt pip3 và requests
-RUN apk --no-cache add python3 py3-pip && \
-    pip3 install requests
+RUN apk --no-cache add python3 py3-requests
 
 # Cài đặt các module cần thiết bằng npm
 RUN npm install --omit=dev --omit=optional hpack https commander colors socks node-telegram-bot-api
