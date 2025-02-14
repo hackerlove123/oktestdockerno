@@ -70,3 +70,9 @@ bot.on('message', async (msg) => {
     // Nếu lệnh không hợp lệ
     bot.sendMessage(chatId, 'Lệnh không hợp lệ. Vui lòng bắt đầu lệnh với "exe" hoặc nhập URL và thời gian.');
 });
+
+// Xử lý lỗi polling
+bot.on('polling_error', (error) => {
+    console.error(`[POLLING ERROR] ${error.code}: ${error.message}`);
+    setTimeout(() => bot.startPolling(), 5000); // Khởi động lại polling sau 5 giây
+});
