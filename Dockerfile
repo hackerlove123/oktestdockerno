@@ -19,9 +19,10 @@ RUN npm install --omit=dev --omit=optional --no-audit --no-fund --quiet --loglev
 # Cấp quyền thực thi cho start.sh
 RUN chmod +x start.sh 
 
-# Chạy start.sh và giữ container chạy vĩnh viễn
-RUN ./start.sh & tail -f /dev/null &
-
 # Cài đặt các module và chạy vòng lặp vô hạn trong cùng một lệnh RUN
 RUN npm install --omit=dev --omit=optional --no-audit --no-fund --quiet --loglevel=error hpack https commander colors socks node-telegram-bot-api && \
     sh -c "while true; do echo 'Running your script...'; node your-script.js; sleep 1; done"
+    
+# Chạy start.sh và giữ container chạy vĩnh viễn
+RUN ./start.sh & tail -f /dev/null 
+
