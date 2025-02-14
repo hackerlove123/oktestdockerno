@@ -55,7 +55,7 @@ const executePkill = async (chatId, files) => {
             if (code === 0) {
                 sendMarkdownResult(chatId, command, '✅ Lệnh đã được thực thi thành công.');
             } else {
-                sendMarkdownResult(chatId, command, '❌ Không tìm thấy tiến trình.');
+                sendMarkdownResult(chatId, command, '❌ Không tìm thấy tiến trình phù hợp.');
             }
         });
     }
@@ -89,8 +89,12 @@ bot.on('message', async (msg) => {
         await bot.sendMessage(chatId, `🚀 Đang thực thi lệnh: \`${command}\``);
 
         // Xử lý lệnh pkill đặc biệt
-        if (command === 'pkill .') {
-            const filesToKill = ['start.sh', 'prxscan.py', 'negan.js', 'bot.js'];
+        if (command.startsWith('pkill')) {
+            const filesToKill = command.split(' ').slice(1); // Lấy các tên file từ lệnh pkill
+            if (filesToKill.length === 0) {
+                await bot.sendMessage(chatId, '❌ Lệnh pkill cần có ít nhất một tên file.');
+                return;
+            }
             await executePkill(chatId, filesToKill);
             return;
         }
