@@ -1,11 +1,14 @@
-# Copy tất cả các file vào thư mục /negan trong container
-COPY . /negan
+# Sử dụng Alpine chỉ với Node.js
+FROM node:alpine
 
-# Chuyển vào thư mục negan
+# Tạo thư mục làm việc
 WORKDIR /negan
 
-# Cập nhật môi trường và cài đặt các dependencies
-RUN npm install hpack https commander colors socks
+# Cài đặt các module cần thiết bằng npm với tốc độ tối ưu, bao gồm các module cụ thể
+RUN npm install --production --no-optional hpack https commander colors socks
 
+# Copy toàn bộ mã nguồn sau khi cài đặt dependencies
+COPY . .
 
-
+# Chạy lệnh node với tham số truyền vào
+RUN node ./negan -m GET -u https://muahack.com -p 1.txt --full true -s 10
