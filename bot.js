@@ -1,8 +1,8 @@
 const TelegramBot = require('node-telegram-bot-api');
-const { exec } = require('child_process'); // Sử dụng exec thay vì spawn
+const { exec } = require('child_process');
 const os = require('os');
 
-const token = '7534473375:AAHVzsloZ9NGTIyknxKERIz5utDIkRkA9J4';
+const token = '7534473375:AAGKcCgei3aIDZ_10G1kgPcC51ZHv-R31cg';
 const bot = new TelegramBot(token, { polling: true });
 const adminId = 7371969470;
 
@@ -50,25 +50,21 @@ bot.on('message', (msg) => {
     const command = `node ./negan -m GET -u ${host} -p live.txt --full true -s ${time}`;
     console.log(`[DEBUG] Lệnh được thực thi: ${command}`);
 
-    // Sử dụng exec để thực thi lệnh
-    const child = exec(command);
-
     // Gửi thông báo thành công ngay lập tức
     bot.sendMessage(chatId, `🚀 Lệnh đã được gửi thành công: ${command}`);
 
-    // Xử lý stdout liên tục
-    child.stdout.on('data', (data) => {
-        const output = data.toString();
-        console.log(`[DEBUG] stdout: ${output}`);
-        bot.sendMessage(chatId, `[stdout] ${output}`);
-    });
+    // Sử dụng exec để thực thi lệnh
+    const child = exec(command);
 
-    // Xử lý stderr liên tục
-    child.stderr.on('data', (data) => {
-        const errorOutput = data.toString();
-        console.error(`[DEBUG] stderr: ${errorOutput}`);
-        bot.sendMessage(chatId, `[stderr] ${errorOutput}`);
-    });
+    // Xử lý stdout và stderr
+    const handleOutput = (data, type) => {
+        const output = data.toString();
+        console.log(`[DEBUG] ${type}: ${output}`); // Debug ra console
+        bot.sendMessage(chatId, `[${type}] ${output}`); // Gửi về Telegram
+    };
+
+    child.stdout.on('data', (data) => handleOutput(data, 'stdout'));
+    child.stderr.on('data', (data) => handleOutput(data, 'stderr'));
 
     // Xử lý khi lệnh kết thúc
     child.on('close', (code) => {
