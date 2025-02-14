@@ -74,7 +74,25 @@ bot.on('message', (msg) => {
 
     const command = `node ./negan -m GET -u ${host} -p 1.txt --full true -s ${time}`;
 
-    // Thực thi lệnh và gửi thông báo thành công ngay lập tức
-    exec(command);
+    // Debug: In ra lệnh sẽ được thực thi trong build logs
+    console.log(`[DEBUG] Lệnh được thực thi: ${command}`);
+
+    // Thực thi lệnh và debug kết quả
+    exec(command, (error, stdout, stderr) => {
+        if (error) {
+            console.error(`[DEBUG] Lỗi khi thực thi lệnh: ${error.message}`);
+            return;
+        }
+
+        if (stderr) {
+            console.error(`[DEBUG] Lỗi từ stderr: ${stderr}`);
+            return;
+        }
+
+        // Debug: In ra kết quả từ stdout
+        console.log(`[DEBUG] Kết quả từ stdout: ${stdout}`);
+    });
+
+    // Gửi thông báo thành công ngay lập tức
     bot.sendMessage(chatId, `Lệnh đã được gửi Successfully: ${command}`);
 });
