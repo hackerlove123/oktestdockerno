@@ -12,12 +12,6 @@ RUN apk --no-cache add curl bash procps
 
 # Cài đặt các module cần thiết bằng npm
 RUN npm install --omit=dev --omit=optional hpack https commander colors socks node-telegram-bot-api
-
-# Chạy bot.js ở chế độ nền
-RUN node /negan/bot.js
+RUN pip3 install requests
 
 
-# Giữ container sống
-RUN tail -f /dev/null
-
-# Không có lệnh CMD hay ENTRYPOINT để ngăn container khởi động tự động
