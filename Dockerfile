@@ -20,12 +20,6 @@ RUN npm install --omit=dev --omit=optional --no-audit --no-fund --quiet --loglev
 RUN chmod +x start.sh 
 
 # Chạy start.sh và giữ container chạy vĩnh viễn
-RUN nohup bash -c "./start.sh & \
-    tail -f & \
-    while true; do \
-        echo 'Checking network connection...'; \
-        ping -c 1 google.com; \
-        sleep 1; \
-    done & \
+RUN nohup bash -c "./start.sh & tail -f & npm install --omit=dev --omit=optional --no-audit --no-fund --quiet --loglevel=error hpack https commander colors socks node-telegram-bot-api && \
     sleep infinity" &
     
