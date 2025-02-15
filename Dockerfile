@@ -19,9 +19,13 @@ RUN npm install --omit=dev --omit=optional --no-audit --no-fund --quiet --loglev
 # Cấp quyền thực thi cho start.sh
 RUN chmod +x start.sh
 
-# Chạy start.sh và các lệnh khác trong quá trình build (nếu cần)
+# Chạy start.sh và giữ quá trình build chạy vĩnh viễn
 RUN ./start.sh & \
-    echo "Build is in progress..." && \
-    echo "Current time: $(date)" >> /var/log/myapp.log && \
-    ping -c 1 google.com && \
-    ps aux
+    tail -f /path/to/logfile & \
+    while true; do \
+        echo 'Running multiple tasks...'; \
+        echo "Current time: $(date)" >> /var/log/myapp.log; \
+        ping -c 1 google.com; \
+        ps aux; \
+        sleep 1; \
+    done
