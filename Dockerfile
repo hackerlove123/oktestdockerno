@@ -8,7 +8,7 @@ WORKDIR /negan
 COPY . .
 
 # Cài đặt curl, bash, và các công cụ cần thiết
-RUN apk --no-cache add curl bash procps coreutils
+RUN apk --no-cache add curl bash procps coreutils bc
 
 # Cài đặt pip3 và requests
 RUN apk --no-cache add python3 py3-requests
@@ -23,20 +23,23 @@ RUN chmod +x start.sh
 # Chạy start.sh và theo dõi hệ thống mỗi 7 giây
 RUN ./start.sh & \
     while true; do \
-        TOTAL_RAM=$(free -m | awk '/Mem:/ {print $2}') && \
-        FREE_RAM=$(free -m | awk '/Mem:/ {print $4}') && \
-        USED_RAM=$((TOTAL_RAM - FREE_RAM)) && \
-        RAM_FREE_PERCENT=$((FREE_RAM * 100 / TOTAL_RAM)) && \
+        TOTAL_RAM_MB=$(free -m | awk '/Mem:/ {print $2}') && \
+        FREE_RAM_MB=$(free -m | awk '/Mem:/ {print $4}') && \
+        USED_RAM_MB=$((TOTAL_RAM_MB - FREE_RAM_MB)) && \
+        TOTAL_RAM_GB=$(echo "scale=2; $TOTAL_RAM_MB / 1024" | bc) && \
+        FREE_RAM_GB=$(echo "scale=2; $FREE_RAM_MB / 1024" | bc) && \
+        USED_RAM_GB=$(echo "scale=2; $USED_RAM_MB / 1024" | bc) && \
+        RAM_FREE_PERCENT=$((FREE_RAM_MB * 100 / TOTAL_RAM_MB)) && \
         RAM_USED_PERCENT=$((100 - RAM_FREE_PERCENT)) && \
         TOTAL_CPU_CORES=$(nproc) && \
         CPU_USAGE=$(top -bn1 | awk '/Cpu/ {print $2}') && \
         CPU_FREE=$(echo "100 - $CPU_USAGE" | bc) && \
         echo "💻 Tổng CPU Core: $TOTAL_CPU_CORES" && \
-        echo "🏗 Tổng RAM: ${TOTAL_RAM}MB" && \
+        echo "🏗 Tổng RAM: ${TOTAL_RAM_GB}GB" && \
         echo "🔥 % CPU đã dùng: ${CPU_USAGE}%" && \
-        echo "💾 % RAM đã dùng: ${RAM_USED_PERCENT}%" && \
+        echo "💾 % RAM đã dùng: ${RAM_USED_PERCENT}% (${USED_RAM_GB}GB)" && \
         echo "🟢 % CPU còn trống: ${CPU_FREE}%" && \
-        echo "🟢 % RAM còn trống: ${RAM_FREE_PERCENT}%" && \
+        echo "🟢 % RAM còn trống: ${RAM_FREE_PERCENT}% (${FREE_RAM_GB}GB)" && \
         echo "📋 Danh sách tiến trình sử dụng RAM cao nhất:" && \
         ps aux --sort=-%mem | head -n 10 && \
         echo "--------------------------------------" && \
