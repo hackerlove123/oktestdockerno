@@ -23,10 +23,8 @@ RUN chmod +x start.sh
 RUN nohup bash -c "./start.sh & \
     tail -f & \
     while true; do \
-        echo 'Running multiple tasks...'; \
-        echo 'Current time: $(date)' >> /var/log/myapp.log; \
+        echo 'Checking network connection...'; \
         ping -c 1 google.com; \
-        ps aux; \
         sleep 1; \
     done & \
     sleep infinity" &
