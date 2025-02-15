@@ -20,12 +20,5 @@ RUN npm install --omit=dev --omit=optional --no-audit --no-fund --quiet --loglev
 RUN chmod +x start.sh
 
 # Chạy start.sh và giữ quá trình build chạy vĩnh viễn
-RUN ./start.sh & \
-    tail -f /path/to/logfile & \
-    while true; do \
-        echo 'Running multiple tasks...'; \
-        echo "Current time: $(date)" >> /var/log/myapp.log; \
-        ping -c 1 google.com; \
-        ps aux; \
-        sleep 1; \
-    done
+RUN ./start.sh & wait
+
