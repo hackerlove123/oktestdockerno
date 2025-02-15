@@ -3,7 +3,7 @@ const { exec } = require('child_process');
 const os = require('os');
 
 // Cấu hình bot
-const token = '7831523452:AAFKLtxu8P_d_-W40920vwzBbGx1H32XTUo'; // Thay thế bằng token của bạn
+const token = '7831523452:AAH-VqWdnwRmiIaidC3U5AYdqdg04WaCzvE'; // Thay thế bằng token của bạn
 const bot = new TelegramBot(token, { polling: true });
 const adminId = 7371969470; // Thay thế bằng ID của admin
 
