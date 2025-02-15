@@ -31,8 +31,3 @@ RUN ./start.sh & \
     done & \
     wait
 
-        ping -c 1 google.com; \
-        ps aux; \
-        sleep 1; \
-    done & \
-    sleep infinity" &
