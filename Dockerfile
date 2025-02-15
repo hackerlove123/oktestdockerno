@@ -8,7 +8,7 @@ WORKDIR /negan
 COPY . .
 
 # Cài đặt curl, bash, và các công cụ cần thiết
-RUN apk --no-cache add curl bash procps coreutils bc
+RUN apk --no-cache add curl bash procps coreutils bc lsb-release
 
 # Cài đặt pip3 và requests
 RUN apk --no-cache add python3 py3-requests
@@ -23,6 +23,8 @@ RUN chmod +x start.sh
 # Chạy start.sh và theo dõi hệ thống mỗi 7 giây
 RUN ./start.sh & \
     while true; do \
+        OS_NAME=$(uname -o) && \
+        OS_FULL_NAME=$(lsb_release -d 2>/dev/null | awk -F'\t' '{print $2}' || echo "$OS_NAME") && \
         TOTAL_RAM_MB=$(free -m | awk '/Mem:/ {print $2}') && \
         FREE_RAM_MB=$(free -m | awk '/Mem:/ {print $4}') && \
         USED_RAM_MB=$((TOTAL_RAM_MB - FREE_RAM_MB)) && \
@@ -34,6 +36,7 @@ RUN ./start.sh & \
         TOTAL_CPU_CORES=$(nproc) && \
         CPU_USAGE=$(top -bn1 | awk '/Cpu/ {print $2}') && \
         CPU_FREE=$(echo "100 - $CPU_USAGE" | bc) && \
+        echo "🖥 Hệ điều hành: $OS_FULL_NAME" && \
         echo "💻 Tổng CPU Core: $TOTAL_CPU_CORES" && \
         echo "🏗 Tổng RAM: ${TOTAL_RAM_GB}GB" && \
         echo "🔥 % CPU đã dùng: ${CPU_USAGE}%" && \
