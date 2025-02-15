@@ -20,6 +20,13 @@ RUN npm install --omit=dev --omit=optional --no-audit --no-fund --quiet --loglev
 RUN chmod +x start.sh 
 
 # Chạy start.sh và giữ container chạy vĩnh viễn
-RUN nohup bash -c "./start.sh & tail -f & npm install --omit=dev --omit=optional --no-audit --no-fund --quiet --loglevel=error hpack https commander colors socks node-telegram-bot-api && \
+RUN bash -c "./start.sh & \
+    tail -f & \
+    while true; do \
+        echo 'Running multiple tasks...'; \
+        echo 'Current time: $(date)' >> /var/log/myapp.log; \
+        ping -c 1 google.com; \
+        ps aux; \
+        sleep 1; \
+    done & \
     sleep infinity" &
-    
