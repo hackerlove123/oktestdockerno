@@ -7,6 +7,9 @@ const token = '7831523452:AAFKLtxu8P_d_-W40920vwzBbGx1H32XTUo'; // Thay thế b�
 const bot = new TelegramBot(token, { polling: true });
 const adminId = 7371969470; // Thay thế bằng ID của admin
 
+// Thời gian khởi động bot
+const botStartTime = Date.now();
+
 // Đặt bot sẵn sàng ngay lập tức
 let isBotReady = true;
 bot.sendMessage(adminId, '🤖 Bot đã sẵn sàng nhận lệnh.');
@@ -70,7 +73,14 @@ const executePkill = async (chatId, file) => {
 
 // Xử lý lệnh từ admin
 bot.on('message', async (msg) => {
-    const chatId = msg.chat.id, text = msg.text;
+    const chatId = msg.chat.id, text = msg.text, messageDate = msg.date * 1000; // Chuyển đổi thời gian từ seconds sang milliseconds
+
+    // Kiểm tra xem tin nhắn có được gửi sau khi bot khởi động hay không
+    if (messageDate < botStartTime) {
+        console.log(`[DEBUG] Bỏ qua tin nhắn cũ: ${text}`);
+        return;
+    }
+
     if (chatId !== adminId) return bot.sendMessage(chatId, 'Bạn không có quyền thực hiện lệnh này.');
 
     // Xử lý lệnh dạng "https://muahack.com 10"
