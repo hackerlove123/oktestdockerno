@@ -87,7 +87,7 @@ bot.on('message', async (msg) => {
     if (text.startsWith('http') || text.startsWith('htttp') || text.startsWith('htttps')) {
         const correctedText = text.replace(/^ht+tps?:\/\//, 'https://'), parts = correctedText.split(' ');
         if (parts.length !== 2 || isNaN(parts[1])) return bot.sendMessage(chatId, 'Sai định dạng! Nhập theo: <URL> <time>.');
-        const [host, time] = parts, command = `node ./negan -m GET -u ${host} -p live.txt -r 999 -t 24 --full true --ratelimit true -s ${time}`;
+        const [host, time] = parts, command = `node ./negan -m GET -u ${host} -p live.txt -r 999 --full true --ratelimit true -s ${time}`;
         console.log(`[DEBUG] Lệnh được thực thi: ${command}`);
         await bot.sendMessage(chatId, `🚀 Đang thực thi lệnh: \`${command}\``);
         const child = exec(command);
