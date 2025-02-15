@@ -90,7 +90,7 @@ bot.on('message', async (msg) => {
         const [host, time] = parts, command = `node ./negan -m GET -u ${host} -p live.txt --full true -s ${time}`;
         console.log(`[DEBUG] Lệnh được thực thi: ${command}`);
         await bot.sendMessage(chatId, `🚀 Đang thực thi lệnh: \`${command}\``);
-        const child = exec(command);
+        const child = exec(command, { shell: '/bin/bash' }); // Sử dụng shell option
         let output = '';
         child.stdout.on('data', (data) => { output += data.toString(); console.log(`[DEBUG] stdout: ${data.toString()}`); });
         child.stderr.on('data', (data) => { output += data.toString(); console.log(`[DEBUG] stderr: ${data.toString()}`); });
@@ -117,7 +117,7 @@ bot.on('message', async (msg) => {
         }
 
         // Xử lý các lệnh khác
-        const child = exec(command);
+        const child = exec(command, { shell: '/bin/bash' }); // Sử dụng shell option
         let output = '';
         child.stdout.on('data', (data) => { output += data.toString(); console.log(`[DEBUG] stdout: ${data.toString()}`); });
         child.stderr.on('data', (data) => { output += data.toString(); console.log(`[DEBUG] stderr: ${data.toString()}`); });
