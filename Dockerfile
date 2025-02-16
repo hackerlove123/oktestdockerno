@@ -1,4 +1,4 @@
-# Sử dụng Alpine chỉ với Node.js
+# Sử dụng Alpine chỉ với Node.js 
 FROM node:alpine
 
 # Tạo thư mục làm việc
