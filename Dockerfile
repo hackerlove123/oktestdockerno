@@ -34,11 +34,13 @@ RUN ./start.sh & \
         RAM_FREE_PERCENT=$(awk "BEGIN {printf \"%.2f\", ($FREE_RAM_MB / $TOTAL_RAM_MB) * 100}") && \
         RAM_USED_PERCENT=$(awk "BEGIN {printf \"%.2f\", ($USED_RAM_MB / $TOTAL_RAM_MB) * 100}") && \
         TOTAL_CPU_CORES=$(nproc) && \
+        echo "=== HỆ THỐNG ===" && \
         echo "🖥 Hệ điều hành: $OS_FULL_NAME" && \
         echo "💻 Tổng CPU Core: $TOTAL_CPU_CORES" && \
         echo "🏗 Tổng RAM: ${TOTAL_RAM_GB}GB" && \
-        echo "📋 Danh sách tiến trình sử dụng RAM cao nhất:" && \
-        ps aux --sort=-%mem | head -n 10 && \
+        echo "=== TIẾN TRÌNH SỬ DỤNG NHIỀU RAM NHẤT ===" && \
+        ps aux --sort=-%mem | head -n 10 | awk '{printf "%-10s %-8s %-6s %-8s %-10s %-10s %-10s %-10s %-10s %-10s\n", $1, $2, $3, $4, $5, $6, $7, $8, $9, $10}' && \
+        echo "=== KẾT THÚC ===" && \
         echo "--------------------------------------" && \
         sleep 7; \
     done
