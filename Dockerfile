@@ -1,7 +1,7 @@
 # Sử dụng Alpine chỉ với Node.js
 FROM node:alpine
 
-# Tạo thư mục làm việc
+# Tạo thư mục làm việc ok
 WORKDIR /negan
 
 # Copy toàn bộ mã nguồn vào container
