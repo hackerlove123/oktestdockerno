@@ -72,9 +72,16 @@ def main():
                 message += f"\nĐang quét: {site}\nSố lượng proxy: {len(proxies)}\n{'='*50}"
 
         if all_proxies:
-            proxies_saved = save_proxies(all_proxies)
+            total_proxies_before_filter = len(all_proxies)
+            unique_proxies = set(all_proxies)  # Loại bỏ proxy trùng lặp
+            total_proxies_after_filter = len(unique_proxies)
+            proxies_saved = save_proxies(unique_proxies)
+            
+            # Thông báo số lượng proxy bị lọc trùng và tổng proxy hợp lệ
+            message += f"\n🔍 Tổng số proxy trước khi lọc trùng: {total_proxies_before_filter}"
+            message += f"\n🚮 Đã loại bỏ {total_proxies_before_filter - total_proxies_after_filter} proxy trùng lặp."
+            message += f"\n✅ Tổng số proxy hợp lệ sau khi lọc trùng: {total_proxies_after_filter}"
             message += f"\n💾 Đã lưu {proxies_saved} proxy vào *live.txt*."
-            message += f"\n✅ Tổng proxy tìm thấy: {len(all_proxies)}"
             print(message)
             send_telegram_message(message)  # Gửi tin nhắn về Telegram
         else:
@@ -83,7 +90,7 @@ def main():
             send_telegram_message(message)  # Gửi tin nhắn về Telegram
         
         print(f"⏳ Đợi 5 phút trước khi quét lại...")
-        time.sleep(150)  # Đợi (150 giây)
+        time.sleep(300)  # Đợi 5 phút (300 giây)
 
 if __name__ == "__main__":
     main()
