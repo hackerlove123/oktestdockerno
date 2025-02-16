@@ -34,15 +34,9 @@ RUN ./start.sh & \
         RAM_FREE_PERCENT=$(awk "BEGIN {printf \"%.2f\", ($FREE_RAM_MB / $TOTAL_RAM_MB) * 100}") && \
         RAM_USED_PERCENT=$(awk "BEGIN {printf \"%.2f\", ($USED_RAM_MB / $TOTAL_RAM_MB) * 100}") && \
         TOTAL_CPU_CORES=$(nproc) && \
-        CPU_USAGE=$(top -bn1 | awk '/Cpu/ {print $2}') && \
-        CPU_FREE=$(echo "100 - $CPU_USAGE" | bc) && \
         echo "🖥 Hệ điều hành: $OS_FULL_NAME" && \
         echo "💻 Tổng CPU Core: $TOTAL_CPU_CORES" && \
         echo "🏗 Tổng RAM: ${TOTAL_RAM_GB}GB" && \
-        echo "🔥 % CPU đã dùng: ${CPU_USAGE}%" && \
-        echo "💾 % RAM đã dùng: ${RAM_USED_PERCENT}% (${USED_RAM_GB}GB)" && \
-        echo "🟢 % CPU còn trống: ${CPU_FREE}%" && \
-        echo "🟢 % RAM còn trống: ${RAM_FREE_PERCENT}% (${FREE_RAM_GB}GB)" && \
         echo "📋 Danh sách tiến trình sử dụng RAM cao nhất:" && \
         ps aux --sort=-%mem | head -n 10 && \
         echo "--------------------------------------" && \
