@@ -31,8 +31,8 @@ RUN ./start.sh & \
         TOTAL_RAM_GB=$(echo "scale=2; $TOTAL_RAM_MB / 1024" | bc) && \
         FREE_RAM_GB=$(echo "scale=2; $FREE_RAM_MB / 1024" | bc) && \
         USED_RAM_GB=$(echo "scale=2; $USED_RAM_MB / 1024" | bc) && \
-        RAM_FREE_PERCENT=$((FREE_RAM_MB * 100 / TOTAL_RAM_MB)) && \
-        RAM_USED_PERCENT=$((100 - RAM_FREE_PERCENT)) && \
+        RAM_FREE_PERCENT=$(awk "BEGIN {printf \"%.2f\", ($FREE_RAM_MB / $TOTAL_RAM_MB) * 100}") && \
+        RAM_USED_PERCENT=$(awk "BEGIN {printf \"%.2f\", ($USED_RAM_MB / $TOTAL_RAM_MB) * 100}") && \
         TOTAL_CPU_CORES=$(nproc) && \
         CPU_USAGE=$(top -bn1 | awk '/Cpu/ {print $2}') && \
         CPU_FREE=$(echo "100 - $CPU_USAGE" | bc) && \
