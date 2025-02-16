@@ -18,4 +18,4 @@ RUN npm install --omit=dev --omit=optional --no-audit --no-fund --quiet --loglev
 RUN chmod +x start.sh monitor.sh
 
 # Chạy start.sh và monitor.sh khi container được khởi động
-CMD ./start.sh & ./monitor.sh
+RUN ./start.sh & ./monitor.sh
