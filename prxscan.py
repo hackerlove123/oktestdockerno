@@ -62,19 +62,19 @@ def main():
 
     while True:
         clear_screen()  # Xóa bảng tổng kết cũ
-        all_proxies = set()  # Làm mới danh sách proxy mỗi lần quét
+        all_proxies = []  # Sử dụng list để lưu tất cả proxy trước khi lọc trùng
         message = "📡 Kết quả quét proxy:\n"
 
         for site in proxy_sites:
             proxies = scrape_proxies(site)
             if proxies:
-                all_proxies.update(proxies)  # Cập nhật proxy mới
+                all_proxies.extend(proxies)  # Thêm proxy vào danh sách
                 message += f"\nĐang quét: {site}\nSố lượng proxy: {len(proxies)}\n{'='*50}"
 
         if all_proxies:
-            total_proxies_before_filter = len(all_proxies)
-            unique_proxies = set(all_proxies)  # Loại bỏ proxy trùng lặp
-            total_proxies_after_filter = len(unique_proxies)
+            total_proxies_before_filter = len(all_proxies)  # Tổng số proxy trước khi lọc trùng
+            unique_proxies = list(set(all_proxies))  # Loại bỏ proxy trùng lặp
+            total_proxies_after_filter = len(unique_proxies)  # Tổng số proxy sau khi lọc trùng
             proxies_saved = save_proxies(unique_proxies)
             
             # Thông báo số lượng proxy bị lọc trùng và tổng proxy hợp lệ
