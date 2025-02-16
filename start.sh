@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# npm install node-telegram-bot-api hpack https commander colors socks && pip install requests
 # Chạy bot.js trong nền
 node bot.js &
 
